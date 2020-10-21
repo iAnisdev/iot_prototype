@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <v-app>
     <nuxt />
-  </section>
+  </v-app>
 </template>
 
 <script>

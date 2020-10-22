@@ -1,7 +1,12 @@
 <template>
   <section>
     <v-toolbar>
-      <v-toolbar-title >hardwareshadow list</v-toolbar-title>
+      <v-toolbar-title> <span>
+        <v-icon
+          :color="getSocketStatus == true ? 'green' : 'red'"
+          name="mdi-access-point"
+          x-large>mdi-access-point</v-icon>
+          </span> hardwareshadow list</v-toolbar-title>
     </v-toolbar>
     <v-container v-if="isLoading" style="height: 80vh">
       <v-row
@@ -25,56 +30,54 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container fluid v-if="!isLoading">
-      <v-row dense v-for="(hardware , index) in hardwareshadow_list" :key="index">
+    <v-container  v-if="!isLoading">
+      <v-row dense v-for="(hardware , index) in HardwareShadowList" :key="index">
         <v-col cols="12">
-          <v-card class="hardware__card"  :style="{
-            'border-left-color': hardware.message.status == 'online' ? 'green' : 'red'
-          }">
+          <v-card class="hardware__card"  :style="{'border-left-color': hardware.message.status == 'online' ? 'green' : 'red' }">
             <v-container fluid>
-              {{hardware._id}}
               <v-row dense>
                 <v-col cols="3">
-                  <v-card-title>
-                    Device
-                  </v-card-title>
-
                   <v-card-subtitle>
-                    {{hardware.message.device}}
+                    Device
                   </v-card-subtitle>
+
+                  <v-card-title>
+                    {{hardware.message.device}}
+                  </v-card-title>
                 </v-col>
                 <v-col cols="3">
-                  <v-card-title>
-                    MAC(id)
-                  </v-card-title>
-
                   <v-card-subtitle>
-                    {{hardware.message.MAC}}
+                    MAC(id)
                   </v-card-subtitle>
+
+                  <v-card-title>
+                    {{hardware.message.MAC}}
+                  </v-card-title>
                 </v-col>
                 <v-col cols="2">
-                  <v-card-title>
-                    Communication
-                  </v-card-title>
-
                   <v-card-subtitle>
+                    Communication
+                  </v-card-subtitle>
+
+                  <v-card-title>
                     {{hardware.receive.device}}
                     <br />
-                    <span v-if="hardware.message.MAC !== hardware.receive.MAC">
+                    <span v-if="hardware.message.MAC !== hardware.receive.MAC" class="moduleId">
                       moduleId : {{hardware.receive.MAC}}
                     </span>
-                  </v-card-subtitle>
-                </v-col>
-                <v-col cols="2">
-                  <v-card-title>
-                    Protocol
                   </v-card-title>
-
-                  <v-card-subtitle>
-                    {{hardware.server.COM}}
-                  </v-card-subtitle>
                 </v-col>
                 <v-col cols="2">
+                  <v-card-subtitle>
+                    Protocol
+                  </v-card-subtitle>
+
+                  <v-card-title>
+                    {{hardware.server.COM}}
+                  </v-card-title>
+                </v-col>
+                <v-col cols="2">
+                  <v-card-subtitle>Status</v-card-subtitle>
                   <v-card-subtitle >
                     <v-chip
                       :color="hardware.message.status == 'online' ? 'green' : 'red'"
@@ -116,20 +119,7 @@
 
 <script>
 import * as _ from 'underscore'
-const feathers = require("@feathersjs/feathers");
-const socketio = require("@feathersjs/socketio-client");
-const io = require("socket.io-client");
-
-const socket = io("http://myowniot.ddns.net:3131");
-const app = feathers();
-// Set up Socket.io client with the socket
-app.configure(socketio(socket));
-
-socket.on("connect", () => {
-  console.log( `%cConnected to WS server ${socket.id} `,  "background-color: green; color: white; padding: 1px 2px");
-
-})
-
+import {mapGetters , mapActions} from 'vuex'
 export default {
   components: {},
   data(){
@@ -146,80 +136,68 @@ export default {
     }
   },
   computed:{
+    ...mapGetters({
+      HardwareShadowList: 'getHardwareShadowList',
+      getSocketStatus: 'getSocketStatus',
+      auth: 'getAuth'
+    }),
     noOfPages(){
       return Math.ceil(this.pagination.total / this.pagination.limit)
     }
   },
   methods: {
-    authenticateSocket(){
-      let that = this
-      app.io.emit('create', 'authentication', {
-      "strategy": "local",
-          "email" :"darma2@darma.com",
-          "password" : "darmia"
-      }, function(error, authResult) {
-        // console.log("authResult " , authResult); 
-      });
-    },
+    ...mapActions({
+      authenticateSocket: 'authenticateSocket',
+      loadHardwareShadows: 'loadHardwareShadows',
+      hardwareshadowCreate: 'hardwareshadowCreate',
+      hardwareshadowUpdate: 'hardwareshadowUpdate',
+      hardwareshadowDelete: 'hardwareshadowDelete'
+    }),
 
     init() {
-      let that = this
-      that.isLoading = true
-       app.io.emit('find' ,'hardwareshadow', {
-        $skip: (that.currentPage - 1) *  that.pagination.limit,
-        $limit: that.pagination.limit
-      }, (error, resp) => {
-        that.hardwareshadow_list = resp.data
-        that.pagination.limit = resp.limit
-        that.pagination.total = resp.total
-        that.pagination.skip = resp.skip
-        that.isLoading = false
-      });
-      
-    },
-    hardwareshadowCreate(data){
-      let that = this
-      that.hardwareshadow_list.unshift(data)
-    },
-    hardwareshadowUpdate(data){
-      let that = this
-      that.hardwareshadow_list = _.map(that.hardwareshadow_list , (hardwareshadow) =>{
-        if(hardwareshadow._id == data._id){
-          return data
-        }else{
-          return hardwareshadow
-        }
+      let _self = this
+      _self.isLoading = true
+      let data = {
+       $skip: (_self.currentPage - 1) *  _self.pagination.limit,
+        $limit: _self.pagination.limit
+      }
+      _self.loadHardwareShadows(data).then((res) =>{
+        _self.pagination.limit = res.limit
+        _self.pagination.total = res.total
+        _self.pagination.skip = res.skip
+        _self.isLoading = false
+      }).catch(err => {
+        console.log("error " , err)
       })
     },
-    hardwareshadowDelete(data){
-        let that = this
-        that.hardwareshadow_list =  _.reject(that.hardwareshadow_list, function(obj){ return obj._id == data._id });
-    }
   },
   watch:{
     currentPage(newVal , oldVal){
-      let that = this
-      that.init();
+      let _self = this
+      _self.init();
     },
     pagination: {
       deep: true,
       handler: function(newVal , oldVal) {
-        let that = this
+        let _self = this
         if(newVal.skip >  newVal.total){
-          that.currentPage = 1
+          _self.currentPage = 1
         }
-        that.init();
+        _self.init();
       }
     }
   },
+  asyncData({isDev, route, store, env, params, query, req, res, redirect, error}) {
+    
+  },
   mounted() {
-    let that = this;
-    that.authenticateSocket()
-    app.io.on('hardwareshadow created' , that.hardwareshadowCreate)
-    app.io.on('hardwareshadow updated' , that.hardwareshadowUpdate)
-    app.io.on('hardwareshadow patched' , that.hardwareshadowUpdate)
-    app.io.on('hardwareshadow removed' , that.hardwareshadowDelete)
-    that.init();
+    this.authenticateSocket().then(() =>{
+    this.init();
+    this.$app.io.on('hardwareshadow created' , this.hardwareshadowCreate)
+    this.$app.io.on('hardwareshadow updated' , this.hardwareshadowUpdate)
+    this.$app.io.on('hardwareshadow patched' , this.hardwareshadowUpdate)
+    this.$app.io.on('hardwareshadow removed' , this.hardwareshadowDelete)
+    })
   },
 
 };
@@ -229,5 +207,15 @@ export default {
 .hardware__card{
   border-left-width: 10px;
   border-left-style: solid;
+}
+.v-card__title{
+  font-size: 1rem;
+  
+}
+.v-card__subtitle, .v-card__text, .v-card__title{
+  padding: 0;
+}
+.moduleId{
+  font-size: 0.75rem;
 }
 </style>

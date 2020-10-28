@@ -26,6 +26,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 export default {
+  auth: false,
   data: () => ({
     emailVerified: false,
     emailErr: null,

@@ -3,8 +3,8 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    titleTemplate: '%s - iot_prototype',
-    title: 'iot_prototype',
+    titleTemplate: 'IOT prototype',
+    title: 'IOT prototype',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -21,6 +21,7 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '~plugins/socket.io',
+    { src: '~/plugins/persistedState.client.js' }
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -36,10 +37,29 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth'
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    baseURL: 'http://darmaserver.ddns.net:3131'
+  },
+  auth: {
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/authentication', method: 'post', propertyName: 'accessToken' },
+          logout: { /*  url: '/api/auth/logout', method: 'post' */ },
+          user: { url: '/userdata', method: 'get', propertyName: false }
+        },
+        tokenRequired: true,
+      }
+    }
+  },
+
+  router: {
+    middleware: ['auth']
+  },
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -62,6 +82,7 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+    transpile: ['vue-notifications'],
     extractCSS: true,
     optimization: {
       splitChunks: {

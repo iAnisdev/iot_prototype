@@ -7,5 +7,8 @@ export default {
     },
     getHardwareShadowList: (state) =>{
         return state.hardware_shadow_list
+    },
+    getLoginStatus: (state) =>{
+        return state.loggedIn
     }
 }

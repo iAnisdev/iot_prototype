@@ -1,127 +1,123 @@
 <template>
   <section>
-    <v-toolbar>
-      <v-toolbar-title> <span>
-        <v-icon
-          :color="getSocketStatus == true ? 'green' : 'red'"
-          name="mdi-access-point"
-          x-large>mdi-access-point</v-icon>
-          </span> hardwareshadow list</v-toolbar-title>
-    </v-toolbar>
-    <v-container v-if="isLoading" style="height: 80vh">
-      <v-row
-        class="fill-height"
-        align-content="center"
-        justify="center"
-      >
-        <v-col
-          class="subtitle-1 text-center"
-          cols="12"
+     <toolbar />
+      <v-container v-if="isLoading" style="height: 80vh">
+        <v-row
+          class="fill-height"
+          align-content="center"
+          justify="center"
         >
-          Loading Data....
-        </v-col>
-        <v-col cols="6">
-          <v-progress-linear
-            color="deep-purple accent-4"
-            indeterminate
-            rounded
-            height="6"
-          ></v-progress-linear>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container  v-if="!isLoading">
-      <v-row dense v-for="(hardware , index) in HardwareShadowList" :key="index">
-        <v-col cols="12">
-          <v-card class="hardware__card"  :style="{'border-left-color': hardware.message.status == 'online' ? 'green' : 'red' }">
-            <v-container fluid>
-              <v-row dense>
-                <v-col cols="3">
-                  <v-card-subtitle>
-                    Device
-                  </v-card-subtitle>
+          <v-col
+            class="subtitle-1 text-center"
+            cols="12"
+          >
+            Loading Data....
+          </v-col>
+          <v-col cols="6">
+            <v-progress-linear
+              color="deep-purple accent-4"
+              indeterminate
+              rounded
+              height="6"
+            ></v-progress-linear>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-container v-if="!isLoading">
+        <v-row dense v-for="(hardware , index) in HardwareShadowList" :key="index">
+          <v-col cols="12">
+            <v-card class="hardware__card"  :style="{'border-left-color': hardware.message.status == 'online' ? 'green' : 'red' }">
+              <v-container fluid>
+                <v-row dense>
+                  <v-col cols="3">
+                    <v-card-subtitle>
+                      Device
+                    </v-card-subtitle>
 
-                  <v-card-title>
-                    {{hardware.message.device}}
-                  </v-card-title>
-                </v-col>
-                <v-col cols="3">
-                  <v-card-subtitle>
-                    MAC(id)
-                  </v-card-subtitle>
+                    <v-card-title>
+                      {{hardware.message.device}}
+                    </v-card-title>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-card-subtitle>
+                      MAC(id)
+                    </v-card-subtitle>
 
-                  <v-card-title>
-                    {{hardware.message.MAC}}
-                  </v-card-title>
-                </v-col>
-                <v-col cols="2">
-                  <v-card-subtitle>
-                    Communication
-                  </v-card-subtitle>
+                    <v-card-title>
+                      {{hardware.message.MAC}}
+                    </v-card-title>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-card-subtitle>
+                      Communication
+                    </v-card-subtitle>
 
-                  <v-card-title>
-                    {{hardware.receive.device}}
-                    <br />
-                    <span v-if="hardware.message.MAC !== hardware.receive.MAC" class="moduleId">
-                      moduleId : {{hardware.receive.MAC}}
-                    </span>
-                  </v-card-title>
-                </v-col>
-                <v-col cols="2">
-                  <v-card-subtitle>
-                    Protocol
-                  </v-card-subtitle>
+                    <v-card-title>
+                      {{hardware.receive.device}}
+                      <br />
+                      <span v-if="hardware.message.MAC !== hardware.receive.MAC" class="moduleId">
+                        moduleId : {{hardware.receive.MAC}}
+                      </span>
+                    </v-card-title>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-card-subtitle>
+                      Protocol
+                    </v-card-subtitle>
 
-                  <v-card-title>
-                    {{hardware.server.COM}}
-                  </v-card-title>
-                </v-col>
-                <v-col cols="2">
-                  <v-card-subtitle>Status</v-card-subtitle>
-                  <v-card-subtitle >
-                    <v-chip
-                      :color="hardware.message.status == 'online' ? 'green' : 'red'"
-                      text-color="white"
-                    >
-                      
-                    {{hardware.message.status}}
-                    </v-chip>
-                  </v-card-subtitle>
-                  <v-card-text >
-                    {{hardware.receive.dateStamp}} {{ hardware.receive.timeStamp}}
-                  </v-card-text>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
+                    <v-card-title>
+                      {{hardware.server.COM}}
+                    </v-card-title>
+                  </v-col>
+                  <v-col cols="2">
+                    <v-card-subtitle>Status</v-card-subtitle>
+                    <v-card-subtitle >
+                      <v-chip
+                        :color="hardware.message.status == 'online' ? 'green' : 'red'"
+                        text-color="white"
+                      >
+                        
+                      {{hardware.message.status}}
+                      </v-chip>
+                    </v-card-subtitle>
+                    <v-card-text >
+                      {{hardware.receive.dateStamp}} {{ hardware.receive.timeStamp}}
+                    </v-card-text>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-if="noOfPages > 1">
+          <v-col cols="3">
+          <v-select
+            :items="pageOptions"
+            label="Per Page style"
+            v-model="pagination.limit"
+            outlined
+          ></v-select>
         </v-col>
-      </v-row>
-      <v-row v-if="noOfPages > 1">
-        <v-col cols="3">
-        <v-select
-          :items="pageOptions"
-          label="Per Page style"
-          v-model="pagination.limit"
-          outlined
-        ></v-select>
-      </v-col>
-        <v-col cols="6">
-        <v-pagination
-          v-model="currentPage"
-          class="my-4"
-          :length="noOfPages"
-        ></v-pagination>
-        </v-col>
-      </v-row>
-    </v-container>
+          <v-col cols="6">
+          <v-pagination
+            v-model="currentPage"
+            class="my-4"
+            :length="noOfPages"
+          ></v-pagination>
+          </v-col>
+        </v-row>
+      </v-container>
   </section>
 </template>
 
 <script>
 import * as _ from 'underscore'
 import {mapGetters , mapActions} from 'vuex'
+import toolbar from '@/components/toolbar'
 export default {
-  components: {},
+  components: {
+    toolbar
+  },
   data(){
     return {
       isLoading: false,
@@ -147,7 +143,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      authenticateSocket: 'authenticateSocket',
       loadHardwareShadows: 'loadHardwareShadows',
       hardwareshadowCreate: 'hardwareshadowCreate',
       hardwareshadowUpdate: 'hardwareshadowUpdate',
@@ -187,17 +182,12 @@ export default {
       }
     }
   },
-  asyncData({isDev, route, store, env, params, query, req, res, redirect, error}) {
-    
-  },
   mounted() {
-    this.authenticateSocket().then(() =>{
-    this.init();
+     this.init();
     this.$app.io.on('hardwareshadow created' , this.hardwareshadowCreate)
     this.$app.io.on('hardwareshadow updated' , this.hardwareshadowUpdate)
     this.$app.io.on('hardwareshadow patched' , this.hardwareshadowUpdate)
     this.$app.io.on('hardwareshadow removed' , this.hardwareshadowDelete)
-    })
   },
 
 };

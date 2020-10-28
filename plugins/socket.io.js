@@ -1,7 +1,7 @@
 const feathers = require("@feathersjs/feathers");
 const socketio = require("@feathersjs/socketio-client");
 const io = require("socket.io-client");
-const socket = io("http://myowniot.ddns.net:3131");
+const socket = io("http://darmaserver.ddns.net:3131/");
 const app = feathers();
 
 export default (context, inject) => {

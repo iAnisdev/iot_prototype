@@ -1,4 +1,7 @@
 export default {
+    SET_LOGIN_STATUS: (state , status) =>{
+        return state.loggedIn = status
+    },
     SET_SOCKET_STATUS: (state , status) => {
         return state.socketStatus = status
     },

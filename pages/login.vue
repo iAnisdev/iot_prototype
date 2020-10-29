@@ -16,15 +16,15 @@
                         <h4 class="text-center mt-4">Ensure your email for registration</h4>
                         <v-form>
                           <v-text-field v-model="emailLogin"
-                          label="Email"
                           name="Email"
                           prepend-icon="mdi-email"
+                          placeholder="Enter your email Adress"
                           type="text"
                           color="blue accent-3" />
                           <v-text-field v-model="passwordLogin"
                           id="password"
-                          label="Password"
                           name="Password"
+                          placeholder="Enter your password"
                           prepend-icon="mdi-lock"
                           type="password"
                           color="blue accent-3" />
@@ -65,21 +65,21 @@
                         <h4 class="text-center mt-4">{{boxSignUp.rightHeader5}}</h4>
                         <v-form>
                           <v-text-field v-model="nameSignIn"
-                          label="Name"
+                          placeholder="Enter your name"
                           name="Name"
                           prepend-icon="mdi-account"
                           type="text"
                           color="blue accent-3" />
 
                           <v-text-field v-model="emailSignIn"
-                          label="Email"
+                          placeholder="Enter your email Adress"
                           name="Email"
                           prepend-icon="mdi-email"
                           type="text"
                           color="blue accent-3" />
 
                           <v-text-field v-model="passwordSignIn"
-                          label="Password"
+                          placeholder="Enter your Password"
                           name="Password"
                           prepend-icon="mdi-lock"
                           type="password"
@@ -194,8 +194,9 @@ export default {
       this.$auth.loginWith('local', {data: data}).then((response) => {
         this.$auth.setUserToken(response.data.accessToken)
         this.$auth.setUser(response.data.user)
-        _self.authenticateSocket(data)
+        _self.authenticateSocket(data).then((res) =>{
         _self.$router.push('/')
+        })
       }).catch((err) =>{
         this.alert.alertMsgText = err.response.data.message
         this.alert.alertMsg = true;

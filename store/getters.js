@@ -5,6 +5,9 @@ export default {
     getAuth: (state) =>{
         return state.auth
     },
+    getAccessToken: (state) =>{
+        return state.accessToken
+    },
     getHardwareShadowList: (state) =>{
         return state.hardware_shadow_list
     },

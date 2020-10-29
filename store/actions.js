@@ -1,21 +1,14 @@
 import * as _ from 'underscore'
 
 export default {
-    authenticateUser({commit , dispatch} , data) {
-        return new Promise((resolve , reject) =>{
-            this.$axios.$post('/authentication' , data).then((resp) =>{
-                commit('SET_LOGIN_STATUS' , true)
-                commit('SET_AUTH' , resp)
-                resolve(resp)
-            }).catch((err) =>{
-                reject(err)
-            })
-        })
-    },
     authenticateSocket({commit , dispatch} , data) {
         return new Promise((resolve , reject) =>{
             this.$app.io.emit('create', 'authentication', data, function(error, authResult) {
-                   commit('SET_AUTH' , authResult)
+                if(error){
+                    return reject(error)
+                }
+                commit('SET_AUTH' , authResult)
+                commit('SET_ACESS_TOKEN' , authResult.accessToken)
                    resolve(authResult)
                 });
         })
@@ -23,8 +16,6 @@ export default {
     createNewUser({commit , dispatch} , data) {
         return new Promise((resolve , reject) =>{
             this.$axios.$post('/usertoken' , data).then((resp) =>{
-                commit('SET_LOGIN_STATUS' , true)
-                commit('SET_AUTH' , resp)
                 resolve(resp)
             }).catch((err) =>{
                 reject(err)
@@ -84,6 +75,7 @@ export default {
             commit('SET_HARDWARE_SHADOW_LIST' , [])
             commit('SET_LOGIN_STATUS' , false)
             commit('SET_AUTH' , {})
+            commit('SET_ACESS_TOKEN' , '')
             resolve(true)
            }catch(err){
             reject(err)

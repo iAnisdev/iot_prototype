@@ -33,10 +33,16 @@ export default {
       logoutUser: 'logoutUser',
     }),
     async logout(){
-        await this.$auth.logout()
-        this.logoutUser().then(() =>{
-            this.$router.push('/login')
-        })
+      let _self = this
+      await this.$auth.logout().then((resp) =>{
+          console.log("resp " , resp)
+           return _self.logoutUser()
+      }).then(() =>{
+            location.reload();
+           _self.$nuxt.refresh()
+        }).catch((err) => {
+          console.log("err " , err)
+      })
     }
   },
 };

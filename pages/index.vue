@@ -135,7 +135,8 @@ export default {
     ...mapGetters({
       HardwareShadowList: 'getHardwareShadowList',
       getSocketStatus: 'getSocketStatus',
-      auth: 'getAuth'
+      getAuth: 'getAuth',
+      accessToken: 'getAccessToken'
     }),
     noOfPages(){
       return Math.ceil(this.pagination.total / this.pagination.limit)
@@ -143,6 +144,7 @@ export default {
   },
   methods: {
     ...mapActions({
+      authenticateSocket: 'authenticateSocket',
       loadHardwareShadows: 'loadHardwareShadows',
       hardwareshadowCreate: 'hardwareshadowCreate',
       hardwareshadowUpdate: 'hardwareshadowUpdate',
@@ -183,11 +185,16 @@ export default {
     }
   },
   mounted() {
-     this.init();
-    this.$app.io.on('hardwareshadow created' , this.hardwareshadowCreate)
-    this.$app.io.on('hardwareshadow updated' , this.hardwareshadowUpdate)
-    this.$app.io.on('hardwareshadow patched' , this.hardwareshadowUpdate)
-    this.$app.io.on('hardwareshadow removed' , this.hardwareshadowDelete)
+    this.authenticateSocket({
+      strategy: 'jwt',
+      accessToken: this.accessToken
+    }).then(() =>{
+      this.init();
+      this.$app.io.on('hardwareshadow created' , this.hardwareshadowCreate)
+      this.$app.io.on('hardwareshadow updated' , this.hardwareshadowUpdate)
+      this.$app.io.on('hardwareshadow patched' , this.hardwareshadowUpdate)
+      this.$app.io.on('hardwareshadow removed' , this.hardwareshadowDelete)
+    })
   },
 
 };

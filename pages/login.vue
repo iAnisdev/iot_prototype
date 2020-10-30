@@ -164,7 +164,7 @@ export default {
       })
       .catch(err => {
         this.alert.alertMsg = true
-        if(err.response.message.includes("needs verification")){
+        if(err.response.data.message.includes("needs verification") ){
           this.alert.alertMsgText  = "Please verify your email..."
           this.alert.alertMsgType = "warning";
 

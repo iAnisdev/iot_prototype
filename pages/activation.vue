@@ -14,7 +14,7 @@
           <h3 class="green--text" v-if="emailVerified">Congratulations!</h3>
           <h3 class="red--text" v-if="!emailVerified">Error!</h3>
           <p v-if="emailVerified">Your email has been verified...</p>
-          <p v-if="!emailVerified">Your email has been failed due to {{emailErr}}</p>
+          <p v-if="!emailVerified" class="red--text">{{emailErr}}</p>
           <nuxt-link to="/login" v-if="emailVerified">Login Now</nuxt-link>
           <nuxt-link to="/login" v-if="!emailVerified">Home Page</nuxt-link>
         </v-col>
@@ -44,7 +44,7 @@ export default {
         })
         .catch(err => {
           this.emailVerified = false;
-          this.emailErr = err;
+          this.emailErr = err.message;
         })
         .finally(() => {
           this.overlay = false;

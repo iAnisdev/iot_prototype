@@ -20,7 +20,7 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    '~plugins/socket.io',
+    { src: '~/plugins/socket.client.js' },
     { src: '~/plugins/persistedState.client.js' }
   ],
 
@@ -41,16 +41,13 @@ export default {
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {
-    baseURL: 'http://darmaserver.ddns.net:3131'
-  },
   auth: {
     strategies: {
       local: {
         endpoints: {
-          login: { url: '/authentication', method: 'post', propertyName: 'accessToken' },
+          login: { url: 'http://darmaserver.ddns.net:3131/authentication', method: 'post', propertyName: 'accessToken' },
           logout: { /*  url: '/api/auth/logout', method: 'post' */ },
-          user: { url: '/userdata', method: 'get', propertyName: false }
+          user: { url: 'http://darmaserver.ddns.net:3131/userdata', method: 'get', propertyName: false }
         },
         tokenRequired: true,
       }

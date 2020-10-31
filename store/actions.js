@@ -15,20 +15,27 @@ export default {
     },
     createNewUser({commit , dispatch} , data) {
         return new Promise((resolve , reject) =>{
-            this.$axios.$post('/usertoken' , data).then((resp) =>{
+            this.$app.io.emit('create', 'usertoken', data, function(error, resp) {
+                if(error){
+                    return reject(error)
+                }
+                console.log("resp " , resp)
                 resolve(resp)
-            }).catch((err) =>{
-                reject(err)
-            })
+            });
         })
     },
     verifiyEmail({commit , dispatch} , data) {
         return new Promise((resolve , reject) =>{
-            this.$axios.$patch(`/usertoken?email=${data.email}&token=${data.token}`).then((resp) =>{
+            this.$app.io.emit('patch', 'usertoken', null, {
+                email: data.email,
+                token: data.token
+            },
+             function( error , resp) {
+                if(error){
+                    return reject(error)
+                }
                 resolve(resp)
-            }).catch((err) =>{
-                reject(err)
-            })
+            });
         })
     },
     loadHardwareShadows({commit , dispatch} , data){
@@ -36,11 +43,11 @@ export default {
             this.$app.io.emit('find' ,'hardwareshadow', {
                 $skip: data.$skip,
                 $limit: data.$limit
-              }, (error, resp) => {
-                if(error) reject(error);
-                commit('SET_HARDWARE_SHADOW_LIST' , resp.data)
-                resolve(resp)
-              });
+            }, (error, resp) => {
+            if(error) reject(error);
+            commit('SET_HARDWARE_SHADOW_LIST' , resp.data)
+            resolve(resp)
+            });
         })
     },
     hardwareshadowCreate({ state , commit , dispatch} , data){
@@ -53,13 +60,13 @@ export default {
     hardwareshadowUpdate({state , commit , dispatch} , data){
         if(data){
             let updated_list  = _.map(state.hardware_shadow_list , (hardwareshadow) =>{
-                    if(hardwareshadow._id == data._id){
-                      return data
-                    }else{
-                      return hardwareshadow
-                    }
-                  })
-                  commit('SET_HARDWARE_SHADOW_LIST' , updated_list)
+                if(hardwareshadow._id == data._id){
+                    return data
+                }else{
+                    return hardwareshadow
+                }
+            })
+            commit('SET_HARDWARE_SHADOW_LIST' , updated_list)
         }
 
     },
@@ -81,5 +88,5 @@ export default {
             reject(err)
            }
        })
-    },
+    }
 }

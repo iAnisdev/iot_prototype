@@ -154,6 +154,9 @@ export default {
         this.alert.alertMsgText = res.success + ", Please check your email for verification"
         this.alert.alertMsg = true;
         this.alert.alertMsgType = "success";
+        this.nameSignIn = ''
+        this.emailSignIn = ''
+        this.passwordSignIn= ''
         // this.step = 1;
         this.boxSignUp.leftHeader1="Welcome " + this.nameSignIn,
         this.boxSignUp.leftHeader5="After email verification, you can proceed to Sign In",
@@ -203,6 +206,15 @@ export default {
         this.alert.alertMsgType = "error";
         console.log(err)
       })
+    }
+  },
+  watch:{
+    step(newVal){
+        this.nameSignIn = ''
+        this.emailSignIn = ''
+        this.passwordSignIn = ''
+        this.emailLogin = ''
+        this.passwordLogin = ''
     }
   }
 }

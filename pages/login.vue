@@ -154,20 +154,20 @@ export default {
         this.alert.alertMsgText = res.success + ", Please check your email for verification"
         this.alert.alertMsg = true;
         this.alert.alertMsgType = "success";
-        this.nameSignIn = ''
-        this.emailSignIn = ''
-        this.passwordSignIn= ''
         // this.step = 1;
-        this.boxSignUp.leftHeader1="Welcome " + this.nameSignIn,
+        this.boxSignUp.leftHeader1="Welcome " + this.data.name,
         this.boxSignUp.leftHeader5="After email verification, you can proceed to Sign In",
         this.boxSignUp.leftBarColor= "success",
         this.boxSignUp.rightHeader1="Account Created",
         this.boxSignUp.rightHeader5="Please check your email for verification",
         this.boxSignUp.rightButton= false
+        this.nameSignIn = ''
+        this.emailSignIn = ''
+        this.passwordSignIn= ''
       })
       .catch(err => {
         this.alert.alertMsg = true
-        if(err.response.data.message.includes("needs verification") ){
+        if(err.message.includes("needs verification") ){
           this.alert.alertMsgText  = "Please verify your email..."
           this.alert.alertMsgType = "warning";
 
@@ -179,7 +179,7 @@ export default {
           this.boxSignUp.rightButton= false
 
         }else{
-          this.alert.alertMsgText  = err.response.data.message
+          this.alert.alertMsgText  = err.message
           this.alert.alertMsgType = "error";
 
           this.boxSignUp.leftHeader1="your email is registered",
@@ -215,6 +215,14 @@ export default {
         this.passwordSignIn = ''
         this.emailLogin = ''
         this.passwordLogin = ''
+        this.boxSignUp = {
+          leftHeader1:"Welcome Back!",
+          leftHeader5:"To keep connected with us, Please login with your personal info",
+          leftBarColor: "blue",
+          rightHeader1:"Create Account",
+          rightHeader5:"Ensure your email for registration",
+          rightButton: true
+        }
     }
   }
 }

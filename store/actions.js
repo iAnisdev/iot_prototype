@@ -19,7 +19,6 @@ export default {
                 if(error){
                     return reject(error)
                 }
-                console.log("resp " , resp)
                 resolve(resp)
             });
         })

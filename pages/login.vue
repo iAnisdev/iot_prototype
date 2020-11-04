@@ -155,7 +155,7 @@ export default {
         this.alert.alertMsg = true;
         this.alert.alertMsgType = "success";
         // this.step = 1;
-        this.boxSignUp.leftHeader1="Welcome " + this.data.name,
+        this.boxSignUp.leftHeader1="Welcome " + this.nameSignIn,
         this.boxSignUp.leftHeader5="After email verification, you can proceed to Sign In",
         this.boxSignUp.leftBarColor= "success",
         this.boxSignUp.rightHeader1="Account Created",
@@ -195,11 +195,9 @@ export default {
       let _self = this
       let data = {strategy: "local", email: this.emailLogin, password: this.passwordLogin }
       this.$auth.loginWith('local', {data: data}).then((response) => {
+        this.$store.commit('SET_ACESS_TOKEN' , response.data.accessToken)
         this.$auth.setUserToken(response.data.accessToken)
         this.$auth.setUser(response.data.user)
-        _self.authenticateSocket(data).then((res) =>{
-        _self.$router.push('/')
-        })
       }).catch((err) =>{
         this.alert.alertMsgText = err.response.data.message
         this.alert.alertMsg = true;

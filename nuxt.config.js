@@ -42,6 +42,12 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   auth: {
+    redirect: {
+      login: '/login',
+      logout: '/login',
+      callback: '/login',
+      home: '/'
+    },
     strategies: {
       local: {
         endpoints: {

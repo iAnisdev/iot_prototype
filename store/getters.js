@@ -13,5 +13,8 @@ export default {
     },
     getLoginStatus: (state) =>{
         return state.loggedIn
+    },
+    getCurrentDevice: (state) =>{
+        return state.currentDevice
     }
 }

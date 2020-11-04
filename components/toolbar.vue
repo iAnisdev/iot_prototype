@@ -35,7 +35,6 @@ export default {
     async logout(){
       let _self = this
       await this.$auth.logout().then((resp) =>{
-          console.log("resp " , resp)
            return _self.logoutUser()
       }).then(() =>{
             location.reload();

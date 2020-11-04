@@ -3,5 +3,6 @@ export default () => ({
     socketStatus: false,
     auth:{},
     accessToken: '',
-    hardware_shadow_list: []
+    hardware_shadow_list: [],
+    currentDevice: {}
 })

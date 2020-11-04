@@ -75,6 +75,16 @@ export default {
             commit('SET_HARDWARE_SHADOW_LIST' , updated_list)
         }
     },
+    fetchDevice({state , commit , dispatch} , id){
+        console.log("fetchDevice " , id)
+        return new Promise((resolve , reject) =>{
+            this.$axios.get(`http://darmaserver.ddns.net:3131/hardwareshadow/${id}`).then((resp) => {
+                commit('SET_CURRENT_DEVICE' , resp.data)
+            }).catch(err => {
+                reject(err)
+            })
+        })
+    },
     logoutUser({state , commit , dispatch} , data){
        return new Promise((resolve , reject) =>{
         try{

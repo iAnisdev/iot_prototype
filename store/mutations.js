@@ -13,5 +13,8 @@ export default {
     },
     SET_HARDWARE_SHADOW_LIST: (state , list) =>{
         return state.hardware_shadow_list = list
+    },
+    SET_CURRENT_DEVICE: (state , device) =>{
+        return state.currentDevice = device
     }
 }
